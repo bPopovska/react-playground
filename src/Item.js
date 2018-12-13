@@ -6,7 +6,8 @@ class Item extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            status: props.item.status
+            status: props.item.status,
+            duration: props.item.duration
         }
     }
 
@@ -16,18 +17,30 @@ class Item extends React.Component {
       }
     }
 
+    onDurationChange(event) {
+      if (event.target) {
+        this.setState({duration: event.target.value})
+      }
+    }
+
     render() {
-      const { item, onDelete, onChangeStatus, onLogTime, onPersistStatus, index} = this.props;
-      console.log(item)
+      const { item, onDelete, onChangeStatus, onChangeDuration, onPersistStatus, onPersistDuration, index} = this.props;
       return (
           <div className="item">
             <div className="item-entry item-name">
               {item.name}
             </div>
-            <div className="item-entry item-duration">
-              {item.duration}
-            </div>
-            {item.editMode ?
+            {item.loggingTime ? (
+              <React.Fragment>
+                <label htmlFor="duration">Duration</label>
+                <input name="duration" value={this.state.duration} type="time"
+                       onChange={event => this.onDurationChange(event)}/>
+                <button onClick={() => onPersistDuration(index, this.state.duration)}>OK</button>
+              </React.Fragment>
+            ) : (<div className="item-entry item-duration">{item.duration}</div>)
+            }
+
+            {item.editingStatus ?
               (<React.Fragment>
                 <label htmlFor="state">State</label>
                 <select name = "state" onChange={event => this.onStatusChange(event)}>
@@ -43,7 +56,7 @@ class Item extends React.Component {
             <div className="item-entry">
               <span><button onClick={() => onDelete(index)}>Remove</button></span>
               <span><button onClick={() => onChangeStatus(index)}>Change Status</button></span>
-              <span><button onClick={() => onLogTime(index)}>Log Time</button></span>
+              <span><button onClick={() => onChangeDuration(index)}>Log Time</button></span>
             </div>
           </div>
         )

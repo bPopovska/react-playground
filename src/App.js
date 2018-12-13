@@ -5,6 +5,7 @@ import Form from './Form';
 
 class App extends Component {
 
+  // the global application state
   state = {
     title: "TODO App",
     items: [
@@ -12,19 +13,22 @@ class App extends Component {
         name: "Item 1",
         duration: "10:00",
         status: 'pending',
-        editMode: false
+        editingStatus: false,
+        loggingTime: false
       },
       {
         name: "Item 2",
         duration: "20:00",
         status: 'pending',
-        editMode: false
+        editingStatus: false,
+        loggingTime: false
       },
       {
         name: "Item 3",
         duration: "34:10",
         status: 'pending',
-        editMode: false
+        editingStatus: false,
+        loggingTime: false
       }
     ],
     addFormShown: false,
@@ -43,11 +47,70 @@ class App extends Component {
   }
 
   onChangeStatus(index) {
-    this.setState(state => ({items: [...state.items.slice(0, index), {...state.items[index], editMode: true}, ...state.items.slice(index + 1)]}))
+    this.setState(state => (
+      {
+        items:
+          [
+            ...state.items.slice(0, index),
+            {
+              ...state.items[index],
+              editingStatus: true
+            },
+            ...state.items.slice(index + 1)
+          ]
+      }
+    ))
   }
 
+  onChangeDuration(index) {
+    this.setState(state => (
+      {
+        items:
+          [
+            ...state.items.slice(0, index),
+            {
+              ...state.items[index],
+              loggingTime: true
+            },
+            ...state.items.slice(index + 1)
+          ]
+      }
+    ))
+  }
+
+
   onPersistStatus(index, newStatus) {
-    this.setState(state => ({items: [...state.items.slice(0, index), {...state.items[index], status: newStatus, editMode: false}, ...state.items.slice(index + 1)]}))
+    this.setState(state => (
+      {
+        items:
+          [
+            ...state.items.slice(0, index),
+            {
+              ...state.items[index],
+              status: newStatus,
+              editingStatus: false,
+            },
+            ...state.items.slice(index + 1)
+          ]
+      }
+    ))
+  }
+
+  onPersistDuration(index, newDuration) {
+    this.setState(state => (
+      {
+        items:
+          [
+            ...state.items.slice(0, index),
+            {
+              ...state.items[index],
+              duration: newDuration,
+              loggingTime: false
+            },
+            ...state.items.slice(index + 1)
+          ]
+      }
+    ))
   }
 
 
@@ -63,6 +126,8 @@ class App extends Component {
             onDelete={this.onDelete.bind(this)}
             onChangeStatus={this.onChangeStatus.bind(this)}
             onPersistStatus={this.onPersistStatus.bind(this)}
+            onChangeDuration={this.onChangeDuration.bind(this)}
+            onPersistDuration={this.onPersistDuration.bind(this)}
           />)}
         </div>
         {!addFormShown ?

@@ -8,7 +8,9 @@ class Form extends React.Component {
   state = {
     name: '',
     duration: 0,
-    status: 'pending'
+    status: 'pending',
+    editingStatus: false,
+    loggingTime: false
   };
 
   onNameChange(event) {
