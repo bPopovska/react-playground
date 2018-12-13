@@ -1,4 +1,7 @@
 import React from 'react';
+import { taskStates} from "./constants";
+
+import './Form.css'
 
 class Form extends React.Component {
 
@@ -37,12 +40,24 @@ class Form extends React.Component {
 
   render() {
     const { toggleAddForm } = this.props;
+
     return (
       <React.Fragment>
-        <div className="newItem">
-          <input value={this.state.name} onChange={event => this.onNameChange(event)}/>
-          <input value={this.state.duration} onChange={event => this.onDurationChange(event)}/>
-          <input value={this.state.status} onChange={event => this.onStatusChange(event)}/>
+        <div className="new-item">
+          <div className="item-input item-input-name">
+            <label for="name">Name</label>
+            <input name="name" value={this.state.name} type="text" onChange={event => this.onNameChange(event)}/>
+          </div>
+          <div className="item-input item-input-duration">
+            <label for="duration">Duration</label>
+            <input name="duration" value={this.state.duration} type="time" onChange={event => this.onDurationChange(event)}/>
+          </div>
+          <div className="item-input item--input-status">
+            <label for="state">State</label>
+            <select name="state" onChange={event => this.onStatusChange(event)}>
+              {taskStates.map(taskState => <option selected={taskState === this.state.status} value={taskState}>{taskState}</option>)}
+            </select>
+          </div>
         </div>
         <div>
           <button onClick={() => this.onFormSubmit()}>Add</button>

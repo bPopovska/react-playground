@@ -1,0 +1,18 @@
+.item {
+    border: black 2px solid;
+    padding: 5px;
+    margin: 5px;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+}
+
+.item-name {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.item-entry {
+    margin: 2px;
+}
