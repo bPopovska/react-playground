@@ -1,7 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux'
+
 import { taskStates} from "./constants";
 
 import './Form.css'
+import {addItem, newDuration, newName, newStatus, toggleAddForm} from "./actions";
 
 class Form extends React.Component {
 
@@ -57,4 +60,30 @@ class Form extends React.Component {
   }
 }
 
-export default Form
+const mapStateToProps = state => {
+  return {
+    newItem: state.newItem
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onAddItem: () => {
+      dispatch(addItem())
+    },
+    onNewName: name => {
+      dispatch(newName(name))
+    },
+    onNewDuration: duration => {
+      dispatch(newDuration(duration))
+    },
+    onNewStatus: status => {
+      dispatch(newStatus(status))
+    },
+    toggleAddForm: () => {
+      dispatch(toggleAddForm())
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Form)

@@ -24,11 +24,7 @@ class Items extends React.Component {
       onPersistStatus,
       onChangeDuration,
       onPersistDuration,
-      toggleAddForm,
-      onNewName,
-      onNewDuration,
-      onNewStatus,
-      onAddItem } = this.props;
+      toggleAddForm } = this.props;
 
     return (
       <div className="App">
@@ -46,20 +42,14 @@ class Items extends React.Component {
         </div>
         {!addFormShown ?
           <button onClick={() => toggleAddForm()}>Add Item</button> :
-          <Form
-            newItem={newItem}
-            toggleAddForm={toggleAddForm}
-            onNewName={onNewName}
-            onNewDuration={onNewDuration}
-            onNewStatus={onNewStatus}
-            onAddItem={onAddItem} />
+          <Form />
         }
       </div>
     )
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     items: state.items,
     addFormShown: state.addFormShown,
@@ -67,7 +57,7 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     onAddItem: () => {
       dispatch(addItem())
