@@ -2,18 +2,29 @@ export default function reduce(state, action) {
   switch(action.type) {
     case 'TOGGLE-ADD-FORM':
       return {
+        ...state,
         addFormShown: !state.addFormShown
       };
     case 'DELETE-ITEM':
       return {
+        ...state,
         items: [...state.items.slice(0, action.index), ...state.items.slice(action.index + 1)]
       };
     case 'ADD-ITEM':
       return {
-        items: [...state.items, action.newItem]
+        ...state,
+        items: [...state.items, state.newItem],
+        newItem: {
+          name: '',
+          duration: '00:00',
+          status: 'pending',
+          editStatus: false,
+          loggingTime: false
+        }
       }
     case 'CHANGE-STATUS':
       return {
+        ...state,
         items:
           [
             ...state.items.slice(0, action.index),
@@ -27,6 +38,7 @@ export default function reduce(state, action) {
 
     case 'CHANGE-DURATION':
       return {
+        ...state,
         items:
           [
             ...state.items.slice(0, action.index),
@@ -39,6 +51,7 @@ export default function reduce(state, action) {
       };
     case 'PERSIST-STATUS':
       return {
+        ...state,
         items:
           [
             ...state.items.slice(0, action.index),
@@ -52,6 +65,7 @@ export default function reduce(state, action) {
       }
     case 'PERSIST-DURATION':
       return {
+        ...state,
         items:
           [
             ...state.items.slice(0, action.index),
@@ -62,6 +76,30 @@ export default function reduce(state, action) {
             },
             ...state.items.slice(action.index + 1)
           ]
+      }
+    case 'NEW-DURATION':
+      return {
+        ...state,
+        newItem: {
+          ...state.newItem,
+          duration: action.duration
+        }
+      }
+    case 'NEW-NAME':
+      return {
+        ...state,
+        newItem: {
+          ...state.newItem,
+          name: action.name
+        }
+      }
+    case 'NEW-STATUS':
+      return {
+        ...state,
+        newItem: {
+          ...state.newItem,
+          status: action.status
+        }
       }
     default:
       break

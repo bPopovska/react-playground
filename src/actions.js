@@ -40,11 +40,32 @@ function persistStatus(index, newStatus) {
   }
 }
 
-function persistDuraion(index, newDuration) {
+function persistDuration(index, newDuration) {
   return {
     type: 'PERSIST-DURATION',
     index,
     newDuration
+  }
+}
+
+function newName(name) {
+  return {
+    type: 'NEW-NAME',
+    name
+  }
+}
+
+function newDuration(duration) {
+  return {
+    type: 'NEW-DURATION',
+    duration
+  }
+}
+
+function newStatus(status) {
+  return {
+    type: 'NEW-STATUS',
+    status
   }
 }
 
@@ -55,5 +76,8 @@ export {
   changeStatus,
   changeDuration,
   persistStatus,
-  persistDuraion
+  persistDuration,
+  newName,
+  newDuration,
+  newStatus
 }
