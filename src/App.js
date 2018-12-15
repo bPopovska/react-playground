@@ -3,116 +3,44 @@ import './App.css';
 import Item from './Item';
 import Form from './Form';
 
+import reduce from './reducer'
+
+import { createStore } from 'redux'
+import {changeDuration, changeStatus, deleteItem, persistDuraion, persistStatus} from "./actions";
+
+
+// the global application state
+const initialState = {
+  title: "TODO App",
+  items: [
+    {
+      name: "Item 1",
+      duration: "10:00",
+      status: 'pending',
+      editingStatus: false,
+      loggingTime: false
+    },
+    {
+      name: "Item 2",
+      duration: "20:00",
+      status: 'pending',
+      editingStatus: false,
+      loggingTime: false
+    },
+    {
+      name: "Item 3",
+      duration: "34:10",
+      status: 'pending',
+      editingStatus: false,
+      loggingTime: false
+    }
+  ],
+  addFormShown: false,
+}
+
 class App extends Component {
 
-  // the global application state
-  state = {
-    title: "TODO App",
-    items: [
-      {
-        name: "Item 1",
-        duration: "10:00",
-        status: 'pending',
-        editingStatus: false,
-        loggingTime: false
-      },
-      {
-        name: "Item 2",
-        duration: "20:00",
-        status: 'pending',
-        editingStatus: false,
-        loggingTime: false
-      },
-      {
-        name: "Item 3",
-        duration: "34:10",
-        status: 'pending',
-        editingStatus: false,
-        loggingTime: false
-      }
-    ],
-    addFormShown: false,
-  }
-
-  toggleAddForm() {
-    this.setState(state => ({addFormShown: !state.addFormShown}))
-  }
-
-  onDelete(index) {
-    this.setState(state => ({items: [...state.items.slice(0, index), ...state.items.slice(index + 1)]}))
-  }
-
-  onItemAdd(newItem) {
-    this.setState(state => ({items: [...state.items, newItem]}))
-  }
-
-  onChangeStatus(index) {
-    this.setState(state => (
-      {
-        items:
-          [
-            ...state.items.slice(0, index),
-            {
-              ...state.items[index],
-              editingStatus: true
-            },
-            ...state.items.slice(index + 1)
-          ]
-      }
-    ))
-  }
-
-  onChangeDuration(index) {
-    this.setState(state => (
-      {
-        items:
-          [
-            ...state.items.slice(0, index),
-            {
-              ...state.items[index],
-              loggingTime: true
-            },
-            ...state.items.slice(index + 1)
-          ]
-      }
-    ))
-  }
-
-
-  onPersistStatus(index, newStatus) {
-    this.setState(state => (
-      {
-        items:
-          [
-            ...state.items.slice(0, index),
-            {
-              ...state.items[index],
-              status: newStatus,
-              editingStatus: false,
-            },
-            ...state.items.slice(index + 1)
-          ]
-      }
-    ))
-  }
-
-  onPersistDuration(index, newDuration) {
-    this.setState(state => (
-      {
-        items:
-          [
-            ...state.items.slice(0, index),
-            {
-              ...state.items[index],
-              duration: newDuration,
-              loggingTime: false
-            },
-            ...state.items.slice(index + 1)
-          ]
-      }
-    ))
-  }
-
+  store = createStore(reduce, initialState)
 
   render() {
     const { items, addFormShown, itemToAdd } = this.state;
@@ -123,11 +51,11 @@ class App extends Component {
             key={item.name}
             item={item}
             index={index}
-            onDelete={this.onDelete.bind(this)}
-            onChangeStatus={this.onChangeStatus.bind(this)}
-            onPersistStatus={this.onPersistStatus.bind(this)}
-            onChangeDuration={this.onChangeDuration.bind(this)}
-            onPersistDuration={this.onPersistDuration.bind(this)}
+            onDelete={() => this.store.dispatch(deleteItem())}
+            onChangeStatus={(index) => this.store.dispatch(changeStatus(index))}
+            onPersistStatus={(index, newStatus) => this.store.dispatch(persistStatus(index, newStatus))}
+            onChangeDuration={index => this.store.dispatch(changeDuration(index))}
+            onPersistDuration={(index, newDuration) => this.store.dispatch(persistDuraion(index, newDuration))}
           />)}
         </div>
         {!addFormShown ?
