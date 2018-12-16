@@ -11,12 +11,28 @@ const client = new ApolloClient({
   uri: 'http://localhost:4000/'
 })
 
+const query = gql`
+                  query getItems($status: String!) {
+                    items(status: $status) {
+                      duration
+                      name
+                      status
+                    }
+                  }
+          `;
+
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.onFilter = this.onFilter.bind(this)
+  }
 
   // the global application state
   state = {
     title: "TODO App",
     addFormShown: false,
+    status: 'inprogress'
   }
 
   toggleAddForm() {
@@ -98,21 +114,16 @@ class App extends Component {
     ))
   }
 
+  onFilter(status) {
+    this.setState({status})
+  }
 
   render() {
-    const { addFormShown, itemToAdd } = this.state;
+    const { addFormShown, itemToAdd, status } = this.state;
     return (
       <ApolloProvider client={client}>
         <div className="App">
-        <Query query={gql`
-                  {
-                    items {
-                      duration
-                      name
-                      status
-                    }
-                  }
-          `}>
+        <Query query={query} variables={{status}}>
           {
             ({data, loading, error}) => {
               if (loading) return (<div>Loading...</div>)
@@ -137,6 +148,11 @@ class App extends Component {
                   {!addFormShown ?
                   <button onClick={() => this.toggleAddForm()}>Add Item</button> :
                   <Form itemToAdd={itemToAdd} toggleAddForm={this.toggleAddForm.bind(this)} onItemAdd={this.onItemAdd.bind(this)}/>}
+                  <div>
+                    <button onClick={() => this.onFilter('pending')}>Pending</button>
+                    <button onClick={() => this.onFilter('inprogress')}>In progress</button>
+                    <button onClick={() => this.onFilter('done')}> Done</button>
+                  </div>
                 </React.Fragment>
               )
             }
