@@ -3,6 +3,14 @@ import './App.css';
 import Item from './Item';
 import Form from './Form';
 
+import ApolloClient from 'apollo-boost'
+import gql from 'graphql-tag'
+import { ApolloProvider, ApolloConsumer } from 'react-apollo'
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/'
+})
+
 class App extends Component {
 
   // the global application state
@@ -117,23 +125,43 @@ class App extends Component {
   render() {
     const { items, addFormShown, itemToAdd } = this.state;
     return (
-      <div className="App">
-        <div className="itemList">
-          {items.map((item, index) => <Item
-            key={item.name}
-            item={item}
-            index={index}
-            onDelete={this.onDelete.bind(this)}
-            onChangeStatus={this.onChangeStatus.bind(this)}
-            onPersistStatus={this.onPersistStatus.bind(this)}
-            onChangeDuration={this.onChangeDuration.bind(this)}
-            onPersistDuration={this.onPersistDuration.bind(this)}
-          />)}
+      <ApolloProvider client={client}>
+        <ApolloConsumer>
+          {
+            client => {
+              client.query({
+                query: gql`
+                  {
+                    items {
+                      duration
+                      name
+                      status
+                    }
+                  }
+                  `
+              }).then(result => console.log(result))
+              return null
+            }
+          }
+        </ApolloConsumer>
+        <div className="App">
+          <div className="itemList">
+            {items.map((item, index) => <Item
+              key={item.name}
+              item={item}
+              index={index}
+              onDelete={this.onDelete.bind(this)}
+              onChangeStatus={this.onChangeStatus.bind(this)}
+              onPersistStatus={this.onPersistStatus.bind(this)}
+              onChangeDuration={this.onChangeDuration.bind(this)}
+              onPersistDuration={this.onPersistDuration.bind(this)}
+            />)}
+          </div>
+          {!addFormShown ?
+            <button onClick={() => this.toggleAddForm()}>Add Item</button> :
+            <Form itemToAdd={itemToAdd} toggleAddForm={this.toggleAddForm.bind(this)} onItemAdd={this.onItemAdd.bind(this)}/>}
         </div>
-        {!addFormShown ?
-          <button onClick={() => this.toggleAddForm()}>Add Item</button> :
-          <Form itemToAdd={itemToAdd} toggleAddForm={this.toggleAddForm.bind(this)} onItemAdd={this.onItemAdd.bind(this)}/>}
-      </div>
+      </ApolloProvider>
     );
   }
 }
