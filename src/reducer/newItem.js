@@ -1,9 +1,9 @@
 const initialNewItem = {
   name: '',
-    duration: '00:00',
-    status: 'pending',
-    editingStatus: false,
-    loggingTime: false
+  duration: '00:00',
+  status: 'pending',
+  editingStatus: false,
+  loggingTime: false
 }
 
 export default function newItemReducer(newItem = initialNewItem, action) {
