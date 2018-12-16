@@ -5,7 +5,7 @@ import Form from './Form';
 
 import ApolloClient from 'apollo-boost'
 import gql from 'graphql-tag'
-import { ApolloProvider, ApolloConsumer } from 'react-apollo'
+import { ApolloProvider, Query } from 'react-apollo'
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/'
@@ -16,29 +16,6 @@ class App extends Component {
   // the global application state
   state = {
     title: "TODO App",
-    items: [
-      {
-        name: "Item 1",
-        duration: "10:00",
-        status: 'pending',
-        editingStatus: false,
-        loggingTime: false
-      },
-      {
-        name: "Item 2",
-        duration: "20:00",
-        status: 'pending',
-        editingStatus: false,
-        loggingTime: false
-      },
-      {
-        name: "Item 3",
-        duration: "34:10",
-        status: 'pending',
-        editingStatus: false,
-        loggingTime: false
-      }
-    ],
     addFormShown: false,
   }
 
@@ -123,14 +100,11 @@ class App extends Component {
 
 
   render() {
-    const { items, addFormShown, itemToAdd } = this.state;
+    const { addFormShown, itemToAdd } = this.state;
     return (
       <ApolloProvider client={client}>
-        <ApolloConsumer>
-          {
-            client => {
-              client.query({
-                query: gql`
+        <div className="App">
+        <Query query={gql`
                   {
                     items {
                       duration
@@ -138,28 +112,36 @@ class App extends Component {
                       status
                     }
                   }
-                  `
-              }).then(result => console.log(result))
-              return null
+          `}>
+          {
+            ({data, loading, error}) => {
+              if (loading) return (<div>Loading...</div>)
+              if (error) return (<div>Something went wrong...</div>)
+              return (
+                <React.Fragment>
+                  <div className="itemList">
+                    {
+                      data.items.map((item, index) =>
+                        <Item
+                          key={item.name}
+                          item={item}
+                          index={index}
+                          onDelete={this.onDelete.bind(this)}
+                          onChangeStatus={this.onChangeStatus.bind(this)}
+                          onPersistStatus={this.onPersistStatus.bind(this)}
+                          onChangeDuration={this.onChangeDuration.bind(this)}
+                          onPersistDuration={this.onPersistDuration.bind(this)} />
+                      )
+                    }
+                  </div>
+                  {!addFormShown ?
+                  <button onClick={() => this.toggleAddForm()}>Add Item</button> :
+                  <Form itemToAdd={itemToAdd} toggleAddForm={this.toggleAddForm.bind(this)} onItemAdd={this.onItemAdd.bind(this)}/>}
+                </React.Fragment>
+              )
             }
           }
-        </ApolloConsumer>
-        <div className="App">
-          <div className="itemList">
-            {items.map((item, index) => <Item
-              key={item.name}
-              item={item}
-              index={index}
-              onDelete={this.onDelete.bind(this)}
-              onChangeStatus={this.onChangeStatus.bind(this)}
-              onPersistStatus={this.onPersistStatus.bind(this)}
-              onChangeDuration={this.onChangeDuration.bind(this)}
-              onPersistDuration={this.onPersistDuration.bind(this)}
-            />)}
-          </div>
-          {!addFormShown ?
-            <button onClick={() => this.toggleAddForm()}>Add Item</button> :
-            <Form itemToAdd={itemToAdd} toggleAddForm={this.toggleAddForm.bind(this)} onItemAdd={this.onItemAdd.bind(this)}/>}
+        </Query>
         </div>
       </ApolloProvider>
     );
