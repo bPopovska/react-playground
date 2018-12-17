@@ -4,22 +4,13 @@ import Item from './Item';
 import Form from './Form';
 
 import ApolloClient from 'apollo-boost'
-import gql from 'graphql-tag'
 import { ApolloProvider, Query } from 'react-apollo'
+import { getItemsQuery } from "./graphql";
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/'
 })
 
-const query = gql`
-                  query getItems($status: String!) {
-                    items(status: $status) {
-                      duration
-                      name
-                      status
-                    }
-                  }
-          `;
 
 class App extends Component {
 
@@ -123,7 +114,7 @@ class App extends Component {
     return (
       <ApolloProvider client={client}>
         <div className="App">
-        <Query query={query} variables={{status}}>
+        <Query query={getItemsQuery} variables={{status}}>
           {
             ({data, loading, error}) => {
               if (loading) return (<div>Loading...</div>)
